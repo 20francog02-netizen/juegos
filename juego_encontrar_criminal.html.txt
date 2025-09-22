@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Detective Mysteries - El Misterio de la Mansión Ravenwood</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #9ca3af;
+            --muted-foreground: #d1d5db;
+            --destructive: #dc2626;
+            --success: #16a34a;
+            --warning: #d97706;
+            --accent: #f59e0b;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--gray-900) 0%, #000 100%);
+            color: white;
+            padding: 1rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 56rem;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            color: var(--muted-foreground);
+            font-size: 1.1rem;
+        }
+
+        .game-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid var(--gray-700);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray-600);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            gap: 1rem;
+        }
+
+        .suspect-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .suspect-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .suspect-card {
+            background: var(--gray-700);
+            border: 1px solid var(--gray-600);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .suspect-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .suspect-name {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .suspect-desc {
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .suspect-motive {
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        .clues-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .clues-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .clue-item {
+            background: var(--secondary);
+            border-left: 4px solid var(--primary);
+            border-radius: 0.25rem;
+            padding: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .clue-number {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .clue-text {
+            color: var(--gray-900);
+            font-size: 0.9rem;
+        }
+
+        .image-container {
+            background: var(--gray-700);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .game-image {
+            width: 100%;
+            height: 16rem;
+            object-fit: cover;
+        }
+
+        .image-caption {
+            padding: 0.75rem;
+            text-align: center;
+            color: var(--muted-foreground);
+            font-size: 0.8rem;
+            background: var(--gray-600);
+        }
+
+        .solution-container {
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 2px solid;
+            margin: 1rem 0;
+        }
+
+        .solution-correct {
+            background: rgba(22, 163, 74, 0.1);
+            border-color: var(--success);
+        }
+
+        .solution-incorrect {
+            background: rgba(220, 38, 38, 0.1);
+            border-color: var(--destructive);
+        }
+
+        .solution-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .truth-revealed {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .truth-title {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .truth-list {
+            list-style: none;
+            font-size: 0.9rem;
+        }
+
+        .truth-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .truth-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .stats-card {
+            background: var(--gray-700);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .stats-title {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .challenges-list {
+            list-style: none;
+            font-size: 0.8rem;
+            color: var(--muted-foreground);
+        }
+
+        .challenges-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .challenges-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+            animation: fadeIn 0.6s ease-out 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .slide-in {
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🔍 Detective Mysteries</h1>
+            <p class="subtitle">Resuelve el crimen de la Mansión Ravenwood</p>
+        </div>
+
+        <div class="game-card">
+            <div class="card-header">
+                <h2 class="card-title" id="game-title">El Misterio de la Mansión Ravenwood</h2>
+                <p class="card-subtitle" id="game-step-counter">Paso 1 de 6</p>
+            </div>
+
+            <div class="card-content">
+                <div id="game-content" class="fade-in">
+                    <!-- El contenido del juego se cargará aquí dinámicamente -->
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-prev" class="btn btn-outline" disabled>
+                        ← Anterior
+                    </button>
+
+                    <button id="btn-next" class="btn btn-primary">
+                        Siguiente →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>¿Listo para resolver el próximo misterio? Tu carrera como detective acaba de comenzar.</p>
+        </div>
+    </div>
+
+    <script>
+        // Datos del juego
+        const gameSteps = [
+            {
+                title: "El Misterio de la Mansión Ravenwood",
+                content:
+                    "Eres un detective llamado a investigar un crimen en la antigua Mansión Ravenwood. El dueño, el Sr. Black, ha sido encontrado muerto en su estudio. Tu misión es descubrir quién es el culpable, cómo lo hizo y por qué.",
+            },
+            {
+                title: "Los Personajes",
+                content: "Conoce a los sospechosos del caso:",
+            },
+            {
+                title: "Escena del Crimen",
+                content: "Observa cuidadosamente la escena del crimen. ¿Notas algo fuera de lugar?",
+            },
+            {
+                title: "Las Pistas",
+                content: "Analiza cada pista cuidadosamente. Toma notas mentales de lo que parece importante.",
+            },
+            {
+                title: "Tu Veredicto",
+                content: "Basado en la evidencia, ¿quién crees que es el culpable?",
+            },
+            {
+                title: "La Resolución",
+                content: "Descubre la verdad detrás del misterio.",
+            },
+        ];
+
+        const suspects = [
+            {
+                name: "Sra. Black",
+                description: "Esposa del difunto. Hereda toda la fortuna.",
+                motive: "Dinero y libertad",
+            },
+            {
+                name: "Mayordomo James",
+                description: "Leal servidor por 20 años. Conoce todos los secretos.",
+                motive: "Venganza por despido inminente",
+            },
+            {
+                name: "Emily Black",
+                description: "Hija única. Tenía conflictos con su padre.",
+                motive: "Herencia y conflicto familiar",
+            },
+            {
+                name: "Carlos",
+                description: "Jardinero. Recientemente despedido.",
+                motive: "Venganza por despido injusto",
+            },
+        ];
+
+        const clues = [
+            "Copa con restos de veneno en la mesa",
+            "Ventana abierta sin señales de fuerza",
+            "Reloj detenido a las 10:15 PM",
+            "Libro con páginas arrancadas cerca del cuerpo",
+            "Manchas de tierra fresca junto a la ventana",
+            "Testamento recientemente modificado",
+        ];
+
+        // Estado del juego
+        let gameStep = 0;
+        let selectedSuspect = null;
+        let showSolution = false;
+
+        // Elementos del DOM
+        const gameTitle = document.getElementById("game-title");
+        const gameStepCounter = document.getElementById("game-step-counter");
+        const gameContent = document.getElementById("game-content");
+        const btnPrev = document.getElementById("btn-prev");
+        const btnNext = document.getElementById("btn-next");
+
+        // Event listeners
+        btnPrev.addEventListener("click", prevStep);
+        btnNext.addEventListener("click", nextStep);
+
+        // Funciones del juego
+        function renderGame() {
+            // Actualizar título y contador
+            gameTitle.textContent = gameSteps[gameStep].title;
+            gameStepCounter.textContent = `Paso ${gameStep + 1} de ${gameSteps.length}`;
+
+            // Actualizar botones
+            btnPrev.disabled = gameStep === 0;
+
+            if (gameStep === gameSteps.length - 1) {
+                btnNext.textContent = "🔁 Jugar de Nuevo";
+            } else if (gameStep === gameSteps.length - 2) {
+                btnNext.textContent = "Ver Solución";
+                btnNext.disabled = !showSolution && selectedSuspect === null;
+            } else {
+                btnNext.textContent = "Siguiente →";
+                btnNext.disabled = false;
+            }
+
+            // Renderizar contenido según el paso actual
+            gameContent.className = "slide-in";
+            setTimeout(() => {
+                gameContent.className = "fade-in";
+            }, 400);
+
+            switch (gameStep) {
+                case 0:
+                    renderIntroduction();
+                    break;
+                case 1:
+                    renderCharacters();
+                    break;
+                case 2:
+                    renderCrimeScene();
+                    break;
+                case 3:
+                    renderClues();
+                    break;
+                case 4:
+                    renderVerdict();
+                    break;
+                case 5:
+                    renderResolution();
+                    break;
+            }
+        }
+
+        function renderIntroduction() {
+            gameContent.innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-lg">${gameSteps[0].content}</p>
+                    <div class="bg-secondary p-4 rounded-lg">
+                        <h3 class="font-semibold text-primary mb-2">⚠️ Advertencia</h3>
+                        <p class="text-sm">Observa cada detalle cuidadosamente. Tu intuición será clave.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCharacters() {
+            let suspectsHTML = suspects
+                .map(
+                    (suspect) => `
+                <div class="suspect-card">
+                    <h4 class="suspect-name">${suspect.name}</h4>
+                    <p class="suspect-desc">${suspect.description}</p>
+                    <p class="suspect-motive">Motivo: ${suspect.motive}</p>
+                </div>
+            `
+                )
+                .join("");
+
+            gameContent.innerHTML = `
+                <div class="space-y-6">
+                    <p class="text-lg">${gameSteps[1].content}</p>
+                    <div class="suspect-grid">
+                        ${suspectsHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCrimeScene() {
+            gameContent.innerHTML = `
+                <div class="space-y-4">
+                    <p class="text-lg">${gameSteps[2].content}</p>
+                    <div class="image-container">
+                        <img 
+                            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" 
+                            alt="Estudio victoriano oscuro con muebles antiguos, escritorio con vaso volcado, ventana abierta con cortinas moviéndose, y reloj de pie detenido a las 10:15"
+                            class="game-image"
+                        />
+                        <div class="image-caption">
+                            <h4 class="truth-title">🔎 Observaciones de la Escena</h4>
+                            <ul class="truth-list">
+                                <li>Mesa principal con documentos esparcidos</li>
+                                <li>Lámpara de mesa volcada</li>
+                                <li>Alfombra persa con manchas sospechosas</li>
+                                <li>Estante de libros en desorden</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderClues() {
+            let cluesHTML = clues
+                .map(
+                    (clue, index) => `
+                <div class="clue-item">
+                    <span class="clue-number">#${index + 1}</span>
+                    <p class="clue-text">${clue}</p>
+                </div>
+            `
+                )
+                .join("");
